@@ -13,14 +13,30 @@ UILocalNotification *localNotification;
 
 - (void)setNotification:(int)secondsTillExpiry{
     
-    NSLog(@"New notification in %i seconds",secondsTillExpiry);
+    //GET USER DEFAULTS
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSNumber *badgeCounter = [prefs objectForKey:@"badgeCounter"];
+    int badgeCounterInt = [badgeCounter integerValue];
     
-    localNotification = [[UILocalNotification alloc] init];
+    //INCREMENT BADGE NUMBER
+    badgeCounterInt++;
+    
+    NSLog(@"New notification in %i seconds, badge counter = %d",secondsTillExpiry, badgeCounterInt);
+    
+    if(!localNotification){
+        localNotification = [[UILocalNotification alloc] init];
+    }
     
     localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:secondsTillExpiry];
     localNotification.alertBody = @"New notification";
     localNotification.timeZone = [NSTimeZone defaultTimeZone];
-    localNotification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+    localNotification.applicationIconBadgeNumber = badgeCounterInt;
+    
+    //SAVE NEW BADGE NUMBER
+    badgeCounter = [NSNumber numberWithInt:badgeCounterInt];
+    [prefs setObject:badgeCounter forKey:@"badgeCounter"];
+    [prefs synchronize];
+    
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     
     
@@ -28,8 +44,11 @@ UILocalNotification *localNotification;
 
 
 - (void)cancelNotifications{
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    //RESET BADGE NUMBER TO ZERO
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSNumber *badgeCounter = [NSNumber numberWithInt:0];
+    [prefs setObject:badgeCounter forKey:@"badgeCounter"];
+    [prefs synchronize];
 }
-
 
 @end

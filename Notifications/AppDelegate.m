@@ -8,7 +8,9 @@
 
 #import "AppDelegate.h"
 
-@implementation AppDelegate
+@implementation AppDelegate;
+
+int badgeNumber = 0;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -37,11 +39,21 @@
 {
     //RESET BADGE NUMBER TO ZERO
     application.applicationIconBadgeNumber = 0;
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSNumber *badgeCounter = [NSNumber numberWithInt:0];
+    [prefs setObject:badgeCounter forKey:@"badgeCounter"];
+    [prefs synchronize];
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification{
+    //SET AN ALERT
+    
 }
 
 @end
